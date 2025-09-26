@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -8,26 +8,6 @@ import heroImage from '@/assets/hero-couple.jpg';
 import { useNavigate } from 'react-router-dom';
 
 const HomePage = () => {
-  const testimonials = [
-    {
-      name: "أم أحمد",
-      rating: 5,
-      text: "منتج رائع، ساعد في تحسين العلاقة بشكل كبير. سرية تامة في التوصيل.",
-      city: "رام الله"
-    },
-    {
-      name: "زوجة سالم",
-      rating: 5, 
-      text: "نتائج ممتازة وسريعة. زوجي أصبح أكثر ثقة. شكراً لكم",
-      city: "نابلس"
-    },
-    {
-      name: "أم محمد",
-      rating: 5,
-      text: "أفضل استثمار في علاقتنا. تأثير يدوم 24 ساعة كما وعدتم",
-      city: "الخليل"
-    }
-  ];
 
   const features = [
     {
@@ -52,6 +32,25 @@ const HomePage = () => {
     }
   ];
   const navigate = useNavigate();
+  const user = localStorage.getItem("user")
+      ? JSON.parse(localStorage.getItem("user") || "{}")
+      : null;
+  const [reviews,setReviews] = useState();
+
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const res = await fetch("http://localhost:3031/api/review/get-approved-reviews");
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || "Error fetching reviews");
+        console.log("Reviews:", data);
+        setReviews(data);
+      } catch (err) {
+        console.error("Error fetching reviews:", err);
+      }
+    };
+    fetchReviews();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-hero" dir="rtl">
@@ -61,13 +60,31 @@ const HomePage = () => {
           <div className="text-2xl font-bold text-luxury">
             Ignite 24
           </div>
+
           <div className="flex gap-4">
-            <Button variant="outline" onClick={() => navigate('/login')}>
-              تسجيل الدخول
-            </Button>
-            <Button variant="romantic" onClick={() => navigate('/signup')}>
-              انضمي معنا
-            </Button>
+            {localStorage.getItem("user") ? (
+                <>
+                  <Button
+                      variant="outline"
+                      onClick={() => {
+                        localStorage.removeItem("user");
+                        localStorage.removeItem("token");
+                        navigate("/login");
+                      }}
+                  >
+                    تسجيل الخروج
+                  </Button>
+                </>
+            ) : (
+                <>
+                  <Button variant="outline" onClick={() => navigate("/login")}>
+                    تسجيل الدخول
+                  </Button>
+                  <Button variant="romantic" onClick={() => navigate("/signup")}>
+                    انضمي معنا
+                  </Button>
+                </>
+            )}
           </div>
         </div>
       </nav>
@@ -81,6 +98,14 @@ const HomePage = () => {
       >
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-8">
+            {user && (
+                <div className="p-4 bg-gradient-soft rounded-lg shadow-elegant mb-6">
+                  <h2 className="text-2xl font-bold text-luxury">
+                    مرحباً، {user.name || user.username} 👋
+                  </h2>
+                  <p className="text-muted-foreground">سعيدون بعودتك إلى Ignite 24 💖</p>
+                </div>
+            )}
             <div className="space-y-4">
               <Badge variant="romantic" className="text-sm px-4 py-2">
                 منتج مرخص وآمن
@@ -104,9 +129,20 @@ const HomePage = () => {
               <Button size="hero" variant="romantic" className="text-lg px-8 py-4" onClick={() => navigate('/purchase')}>
                 فاجئيه الآن
               </Button>
-              
-              <Button size="lg" variant="outline" className="text-lg px-8 py-4">
-                معرفة المزيد
+
+              <Button
+                  size="lg"
+                  variant="outline"
+                  className="text-lg px-8 py-4"
+                  onClick={() => {
+                    if (user) {
+                      navigate("/articles");
+                    } else {
+                      alert("⚠️ يجب تسجيل الدخول للوصول إلى المقالات");
+                    }
+                  }}
+              >
+                قراءة المقالات
               </Button>
             </div>
 
@@ -255,7 +291,7 @@ const HomePage = () => {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
+            {reviews?.map((testimonial, index) => (
               <Card key={index} className="text-center hover:shadow-romantic transition-elegant">
                 <CardContent className="p-6">
                   <div className="flex justify-center mb-4">
@@ -264,7 +300,7 @@ const HomePage = () => {
                     ))}
                   </div>
                   <p className="text-muted-foreground mb-4 leading-relaxed">
-                    "{testimonial.text}"
+                    "{testimonial.contentText}"
                   </p>
                   <div className="space-y-1">
                     <div className="font-semibold text-luxury">{testimonial.name}</div>
@@ -292,7 +328,9 @@ const HomePage = () => {
               <CardContent className="p-8 text-center">
                 <h2 className="text-3xl font-bold mb-4">انتسبي معنا لأسعار أفضل</h2>
                 <p className="text-xl mb-6 opacity-90">
-                  والوصول لمقالات مهمة لتحسين العلاقة الزوجية
+                  {user
+                      ? "🎉 الآن لديك توصيل مجاني مع Ignite 24!"
+                      : "انضمي لعائلتنا لتحصلي على توصيل مجاني."}
                 </p>
                 <div className="space-y-3 mb-8 text-sm">
                   <div>✓ خصومات حصرية على جميع المنتجات</div>
@@ -300,8 +338,9 @@ const HomePage = () => {
                   <div>✓ نصائح لتحسين العلاقة الحميمة</div>
                   <div>✓ محتوى حصري للأعضاء فقط</div>
                 </div>
-                <Button size="lg" variant="luxury" onClick={() => navigate('/signup')}>
-                  انضمي الآن - مجاناً
+                <Button size="lg" variant="luxury" onClick={() => navigate(user ? '/articles' : '/signup' )}>
+                  {user ? 'تصفحي المقالات' : 'انضمي الآن - مجاناً'}
+
                 </Button>
               </CardContent>
             </Card>
