@@ -14,25 +14,66 @@ const SignupPage = () => {
     phone: '',
     email: '',
     address: '',
-    city: ''
+    city: '',
+    password: "",
+    secondPhone: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Frontend only - show success message
-    toast({
-      title: "تم التسجيل بنجاح!",
-      description: "مرحباً بك في عائلة Ignite 24. ستحصلين على أسعار مميزة ومقالات حصرية.",
-    });
-    
-    // Reset form
-    setFormData({
-      username: '',
-      phone: '',
-      email: '',
-      address: '',
-      city: ''
-    });
+
+    // Phone validation
+    const phoneRegex = /^05\d{8}$/; // starts with 05 + 8 more digits = 10 total
+    if (!phoneRegex.test(formData.phone)) {
+      toast({
+        title: "خطأ في رقم الهاتف",
+        description: "رقم الهاتف يجب أن يبدأ بـ 05 ويحتوي على 10 أرقام.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const res = await fetch("http://localhost:3031/api/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include", // for cookies/JWT if needed
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "حدث خطأ غير متوقع");
+      }
+
+      toast({
+        title: "تم التسجيل بنجاح!",
+        description: "مرحباً بك في عائلة Ignite 24. ستحصلين على أسعار مميزة ومقالات حصرية.",
+      });
+
+      console.log("Server response:", data);
+
+      // Reset form
+      setFormData({
+        username: '',
+        phone: '',
+        email: '',
+        address: '',
+        city: '',
+        password: "",
+        secondPhone: "",
+      });
+      navigate('/');
+    } catch (err: any) {
+      toast({
+        title: "خطأ في التسجيل",
+        description: err.message || "تعذر الاتصال بالخادم",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleInputChange = (field: string, value: string) => {
@@ -41,7 +82,7 @@ const SignupPage = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-gradient-hero py-12" dir="rtl">
+    <div className="min-h-screen bg-gradient-hero pb-6" dir="rtl">
       {/* Navigation */}
       <nav className="container mx-auto px-4 py-6">
         <div className="flex justify-between items-center">
@@ -90,7 +131,19 @@ const SignupPage = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-luxury">البريد الإلكتروني</Label>
+                <Label htmlFor="secondPhone" className="text-luxury">رقم الهاتف الثاني (اختياري)</Label>
+                <Input
+                    id="secondPhone"
+                    type="tel"
+                    placeholder="05xxxxxxxx"
+                    value={formData.secondPhone}
+                    onChange={(e) => handleInputChange('secondPhone', e.target.value)}
+                    className="text-right"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-luxury">البريد الإلكتروني (اختياري)</Label>
                 <Input
                   id="email"
                   type="email"
@@ -101,6 +154,25 @@ const SignupPage = () => {
                 />
               </div>
 
+
+              <div className="space-y-2">
+                <Label htmlFor="password" className="text-luxury">كلمة المرور *</Label>
+                <Input
+                    id="password"
+                    type="password"
+                    placeholder="********"
+                    value={formData.password}
+                    onChange={(e) => handleInputChange('password', e.target.value)}
+                    required
+                    minLength={8} // HTML5 validation
+                    className="text-right"
+                />
+                {formData.password && formData.password.length < 8 && (
+                    <p className="text-red-500 text-sm">يجب أن تكون كلمة المرور 8 أحرف على الأقل</p>
+                )}
+              </div>
+
+
               <div className="space-y-2">
                 <Label htmlFor="city" className="text-luxury">المدينة *</Label>
                 <Select onValueChange={(value) => handleInputChange('city', value)} required>
@@ -108,9 +180,9 @@ const SignupPage = () => {
                     <SelectValue placeholder="اختاري المدينة" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="west-bank">الضفة الغربية</SelectItem>
-                    <SelectItem value="jerusalem">القدس</SelectItem>
-                    <SelectItem value="interior">الداخل</SelectItem>
+                    <SelectItem value="الضفة الغربية">الضفة الغربية</SelectItem>
+                    <SelectItem value="القدس">القدس</SelectItem>
+                    <SelectItem value="الداخل">الداخل</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

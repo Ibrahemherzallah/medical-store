@@ -5,6 +5,8 @@ import connectMongoDB from "./db/connectDB.js";
 import cors from 'cors'
 import {fileURLToPath} from "url";
 import authRoutes from "./routes/user.routes.js";
+import reviewRoutes from "./routes/review.routes.js";
+import orderRoutes from "./routes/order.routes.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const app = express()
@@ -21,6 +23,8 @@ dotenv.config();
 app.use(express.json())
 app.use(express.static(staticPath));
 app.use('/api/auth',authRoutes)
+app.use('/api/review',reviewRoutes)
+app.use('/api/order',orderRoutes)
 
 app.get(/^\/(?!api).*/, (req, res) => {
     res.sendFile(path.join(staticPath, 'index.html'));

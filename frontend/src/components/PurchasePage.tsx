@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -24,17 +24,30 @@ const PurchasePage = () => {
     package: ''
   });
   const [deliveryFee, setDeliveryFee] = useState(0);
+  const [deliveryFeeSubscription, setDeliveryFeeSubscription] = useState(0);
   const [reviewData, setReviewData] = useState({
     rating: 0,
     text: '',
-    name: ''
+    name: '',
+    city: ''
   });
   const [isReviewOpen, setIsReviewOpen] = useState(false);
+
+  const user = localStorage.getItem("user")
+      ? JSON.parse(localStorage.getItem("user") || "{}")
+      : null;
+  const [reviews,setReviews] = useState();
 
   const deliveryFees = {
     'الضفة الغربية': 20,
     'القدس': 30,
     'الداخل': 50
+  };
+
+  const deliveryFeesSubscription = {
+    'الضفة الغربية': 0,
+    'القدس': 10,
+    'الداخل': 30
   };
 
   const packages = {
@@ -44,7 +57,11 @@ const PurchasePage = () => {
 
   const handleCityChange = (city: string) => {
     setFormData({ ...formData, city });
-    setDeliveryFee(deliveryFees[city as keyof typeof deliveryFees] || 0);
+    if(user){
+      setDeliveryFeeSubscription(deliveryFeesSubscription[city as keyof typeof deliveryFeesSubscription] || 0)
+    } else {
+      setDeliveryFee(deliveryFees[city as keyof typeof deliveryFees] || 0);
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -65,7 +82,7 @@ const PurchasePage = () => {
     });
   };
 
-  const handleReviewSubmit = (e: React.FormEvent) => {
+  const handleReviewSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!reviewData.rating || !reviewData.text || !reviewData.name) {
       toast({
@@ -75,18 +92,40 @@ const PurchasePage = () => {
       });
       return;
     }
-    
-    // Here you would integrate with Supabase to store the review
-    toast({
-      title: "شكراً لك!",
-      description: "تم إرسال تقييمك بنجاح",
-    });
-    
-    setReviewData({ rating: 0, text: '', name: '' });
-    setIsReviewOpen(false);
-  };
 
-  const totalPrice = formData.package ? packages[formData.package as keyof typeof packages].price + deliveryFee : 0;
+    try {
+      const res = await fetch("http://localhost:3031/api/review", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(reviewData),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "حدث خطأ غير متوقع");
+      }
+      // Here you would integrate with Supabase to store the review
+      toast({
+        title: "شكراً لك!",
+        description: "تم إرسال تقييمك بنجاح",
+      });
+
+      setReviewData({ rating: 0, text: '', name: '' });
+      setIsReviewOpen(false);
+    }
+    catch (err: any) {
+      toast({
+        title: "خطأ في حفظ التقييم",
+        description: err.message || "تعذر الاتصال بالخادم",
+        variant: "destructive",
+      });
+    }
+  };
+  const selectedFee = user ? deliveryFeeSubscription : deliveryFee
+  const totalPrice = formData.package ? packages[formData.package as keyof typeof packages].price + selectedFee : 0;
 
   const testimonials = [
     {
@@ -117,6 +156,20 @@ const PurchasePage = () => {
 
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const res = await fetch("http://localhost:3031/api/review/get-approved-reviews");
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || "Error fetching reviews");
+        console.log("Reviews:", data);
+        setReviews(data);
+      } catch (err) {
+        console.error("Error fetching reviews:", err);
+      }
+    };
+    fetchReviews();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-hero" dir="rtl">
@@ -201,28 +254,58 @@ const PurchasePage = () => {
                 </div>
 
                 {/* City */}
-                <div className="space-y-3">
-                  <Label htmlFor="city">المدينة *</Label>
-                  <Select onValueChange={handleCityChange}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="اختاري المدينة" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="الضفة الغربية">الضفة الغربية - 20 شيكل توصيل</SelectItem>
-                      <SelectItem value="القدس">القدس - 30 شيكل توصيل</SelectItem>
-                      <SelectItem value="الداخل">الداخل - 50 شيكل توصيل</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+
+
+                { user
+                    ?
+                    <div className="space-y-3">
+                      <Label htmlFor="city">المدينة *</Label>
+                      <Select onValueChange={handleCityChange}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="اختاري المدينة" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="الضفة الغربية">الضفة الغربية - 0 شيكل توصيل</SelectItem>
+                          <SelectItem value="القدس">القدس - 10 شيكل توصيل</SelectItem>
+                          <SelectItem value="الداخل">الداخل - 30 شيكل توصيل</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    :
+                    <div className="space-y-3">
+                      <Label htmlFor="city">المدينة *</Label>
+                      <Select onValueChange={handleCityChange}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="اختاري المدينة" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="الضفة الغربية">الضفة الغربية - 20 شيكل توصيل</SelectItem>
+                          <SelectItem value="القدس">القدس - 30 شيكل توصيل</SelectItem>
+                          <SelectItem value="الداخل">الداخل - 50 شيكل توصيل</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                }
+
 
                 {/* Total Price */}
-                {totalPrice > 0 && (
-                  <div className="bg-gradient-soft p-4 rounded-lg">
-                    <div className="flex justify-between items-center text-lg">
-                      <span>المجموع الكلي:</span>
-                      <span className="font-bold text-romantic">{totalPrice} شيكل</span>
+                {totalPrice > 0 && formData.city && (
+                    <div className="bg-gradient-soft p-4 rounded-lg shadow-elegant">
+                      <div className="flex flex-col items-end text-lg space-y-2">
+                        {/* Old Price (strikethrough) */}
+                        {user && (
+                            <span className="text-gray-500 line-through text-base">
+                              {totalPrice + 20} شيكل
+                            </span>
+                         )}
+
+                        {/* New Price */}
+                        <div className="flex justify-between w-full items-center">
+                          <span className="font-medium text-muted-foreground">المجموع الكلي:</span>
+                          <span className="font-bold text-romantic text-xl">{totalPrice} شيكل</span>
+                        </div>
+                      </div>
                     </div>
-                  </div>
                 )}
 
                 <Button type="submit" size="lg" variant="romantic" className="w-full">
@@ -283,6 +366,17 @@ const PurchasePage = () => {
                             required
                           />
                         </div>
+
+                        <div className="space-y-2">
+                          <Label htmlFor="reviewCity">المدينة</Label>
+                          <Input
+                              id="reviewCity"
+                              value={reviewData.city}
+                              onChange={(e) => setReviewData({ ...reviewData, city: e.target.value })}
+                              placeholder="ادخل المدينة"
+                              required
+                          />
+                        </div>
                         
                         <div className="space-y-2">
                           <Label htmlFor="reviewText">التقييم *</Label>
@@ -316,7 +410,7 @@ const PurchasePage = () => {
                 </div>
                 
                 <div className="space-y-4">
-                  {testimonials.map((testimonial, index) => (
+                  {reviews?.map((testimonial, index) => (
                     <Card key={index} className="hover:shadow-romantic transition-elegant">
                       <CardContent className="p-6">
                         <div className="flex justify-center mb-4">
@@ -325,7 +419,7 @@ const PurchasePage = () => {
                           ))}
                         </div>
                         <p className="text-muted-foreground mb-4 leading-relaxed">
-                          "{testimonial.text}"
+                          "{testimonial.contentText}"
                         </p>
                         <div className="space-y-1">
                           <div className="font-semibold text-luxury">{testimonial.name}</div>

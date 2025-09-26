@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
     {
-        name: {
+        username: {
             type: String,
             required: true
         },
@@ -17,12 +17,20 @@ const userSchema = new mongoose.Schema(
         },
         email: {
             type: String,
-            unique: true,
-            sparse: true
+            required: false
         },
         password: {
             type: String,
             required: true
+        },
+        address: {
+            type: String,
+            required: true,
+        },
+        city: {
+            type: String,
+            enum: ["الضفة الغربية", "الداخل", "القدس"],
+            required: true,
         },
         role: {
             type: String,

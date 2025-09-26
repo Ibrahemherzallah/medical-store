@@ -5,26 +5,28 @@ import jwt from "jsonwebtoken";
 
 export const registerUser = async (req, res) => {
     try {
-        const { name, phone, secondPhone, email, password } = req.body;
-
+        const { username, phone, secondPhone, email, password, address, city } = req.body;
         const existingUser = await User.findOne({ phone });
-        if (existingUser) return res.status(400).json({ message: "Phone already registered" });
+        if (existingUser) return res.status(400).json({ message: "رقم الهاتف موجود" });
 
         const hashedPassword = await bcrypt.hash(password, 10);
+        console.log("hashedPassword : " , hashedPassword)
 
         const user = new User({
-            name,
+            username,
             phone,
             secondPhone,
             email,
+            address,
+            city,
             password: hashedPassword,
         });
 
         await user.save();
 
-        res.status(201).json({ message: "User registered successfully", user });
+        res.status(201).json({ message: "تم الانشاء بنجاح", user });
     } catch (error) {
-        res.status(500).json({ message: "Error registering user", error: error.message });
+        res.status(500).json({ message: "خطأ في انشاء حساب المستخدم", error: error.message });
     }
 };
 
@@ -33,10 +35,10 @@ export const loginUser = async (req, res) => {
     try {
         const { phone, password } = req.body;
         const user = await User.findOne({ phone });
-        if (!user) return res.status(404).json({ message: "User not found" });
+        if (!user) return res.status(404).json({ message: "المستخدم غير موجود" });
 
         const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
+        if (!isMatch) return res.status(400).json({ message: "معلومات خاطئة" });
 
         const token = jwt.sign(
             { id: user._id, role: user.role },
@@ -44,18 +46,21 @@ export const loginUser = async (req, res) => {
             { expiresIn: "7d" }
         );
 
-        res.json({ message: "Login successful", token, user });
+        res.json({ message: "تم تسجيل الدخول بنجاح", token, user });
     } catch (error) {
-        res.status(500).json({ message: "Error logging in", error: error.message });
+        res.status(500).json({ message: "خطأ في تسجيل الدخول", error: error.message });
     }
 };
 
-// Get all users (admin only)
+// Get only normal users (exclude admins)
 export const getUsers = async (req, res) => {
     try {
-        const users = await User.find().select("-password");
+        const users = await User.find({ role: "user" }).select("-password");
         res.json(users);
     } catch (error) {
-        res.status(500).json({ message: "Error fetching users", error: error.message });
+        res.status(500).json({
+            message: "Error fetching users",
+            error: error.message
+        });
     }
 };

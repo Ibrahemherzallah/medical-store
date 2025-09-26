@@ -1,47 +1,59 @@
 import Review from "../models/review.model.js";
+import User from "../models/user.model.js";
 
 // Create a review
 export const createReview = async (req, res) => {
     try {
-        const { userId, contentText, rating } = req.body;
+        const { name, text:contentText, rating, city } = req.body;
 
         const review = new Review({
-            userId,
+            name,
             contentText,
             rating,
+            city
         });
 
         await review.save();
-        res.status(201).json({ message: "Review submitted successfully", review });
+        res.status(201).json({ message: "تمت اضافة التقييم بنجاح", review });
     } catch (error) {
-        res.status(500).json({ message: "Error creating review", error: error.message });
+        res.status(500).json({ message: "حدث خطأ في اضافة التقييم", error: error.message });
     }
 };
 
-// Approve review (admin only)
+// Approve or disapprove review (admin only)
 export const approveReview = async (req, res) => {
     try {
         const { id } = req.params;
-        const review = await Review.findByIdAndUpdate(
-            id,
-            { approved: true },
-            { new: true }
-        );
 
-        if (!review) return res.status(404).json({ message: "Review not found" });
+        // Find review first
+        const review = await Review.findById(id);
+        if (!review) return res.status(404).json({ message: "التقييم غير موجود" });
 
-        res.json({ message: "Review approved", review });
+        // Toggle approved
+        review.approved = !review.approved;
+        await review.save();
+
+        res.json({ message: "تم تحديث حالة التقييم", review });
     } catch (error) {
-        res.status(500).json({ message: "Error approving review", error: error.message });
+        res.status(500).json({ message: "خطأ في تحديث التقييم", error: error.message });
     }
 };
 
 // Get all approved reviews
 export const getApprovedReviews = async (req, res) => {
     try {
-        const reviews = await Review.find({ approved: true }).populate("userId", "name");
+        const reviews = await Review.find({ approved: true });
+        res.json(reviews);
+    } catch (error) {
+        res.status(500).json({ message: "خطأ في استعادة التقرير", error: error.message });
+    }
+};
+
+export const getReviews = async (req, res) => {
+    try {
+        const reviews = await Review.find();
         res.json(reviews);
     } catch (error) {
         res.status(500).json({ message: "Error fetching reviews", error: error.message });
     }
-};
+}

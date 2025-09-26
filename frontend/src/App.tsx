@@ -11,6 +11,7 @@ import LoginPage from "./components/LoginPage";
 import ArticlesPage from "./components/ArticlesPage";
 import AdminPanel from "./components/AdminPanel";
 import NotFound from "./pages/NotFound";
+import ProtectedRoute from "@/protect.tsx";
 
 const queryClient = new QueryClient();
 
@@ -26,8 +27,25 @@ const App = () => (
           <Route path="/privacy" element={<PrivacyPage />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/articles" element={<ArticlesPage />} />
-          <Route path="/admin" element={<AdminPanel />} />
+          {/* Protected: only logged-in users */}
+          <Route
+              path="/articles"
+              element={
+                <ProtectedRoute>
+                  <ArticlesPage />
+                </ProtectedRoute>
+              }
+          />
+
+          {/* Admin only */}
+          <Route
+              path="/admin"
+              element={
+                <ProtectedRoute role="admin">
+                  <AdminPanel />
+                </ProtectedRoute>
+              }
+          />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
