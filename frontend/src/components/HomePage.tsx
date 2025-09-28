@@ -303,7 +303,11 @@ const HomePage = () => {
                     "{testimonial.contentText}"
                   </p>
                   <div className="space-y-1">
-                    <div className="font-semibold text-luxury">{testimonial.name}</div>
+                    <div className="font-semibold text-luxury">
+                            <span className="blur-sm select-none">
+                              {testimonial.name}
+                            </span>
+                    </div>
                     <div className="text-sm text-muted-foreground">{testimonial.city}</div>
                   </div>
                 </CardContent>

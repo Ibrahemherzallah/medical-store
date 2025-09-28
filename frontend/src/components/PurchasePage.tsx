@@ -21,7 +21,9 @@ const PurchasePage = () => {
     secondPhone: '',
     email: '',
     city: '',
-    package: ''
+    deliveryRegion: '',
+    package: '',
+    user: false
   });
   const [deliveryFee, setDeliveryFee] = useState(0);
   const [deliveryFeeSubscription, setDeliveryFeeSubscription] = useState(0);
@@ -64,22 +66,76 @@ const PurchasePage = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name || !formData.phone || !formData.city || !formData.package) {
+
+    if (
+        !formData.name ||
+        !formData.phone ||
+        !formData.city ||
+        !formData.package ||
+        !formData.deliveryRegion
+    ) {
       toast({
         title: "خطأ",
         description: "يرجى ملء جميع الحقول المطلوبة",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
-    
-    // Here you would integrate with Supabase to store the order
-    toast({
-      title: "تم إرسال الطلب",
-      description: "سيتم التواصل معك قريباً لتأكيد الطلب",
-    });
+
+    try {
+      const token = localStorage.getItem("token");
+      const storedUser = localStorage.getItem("user")
+          ? JSON.parse(localStorage.getItem("user") || "{}")
+          : null;
+
+      // update formData.user dynamically based on storedUser
+      const payload = {
+        ...formData,
+        user: storedUser ? true : false, // 👈 here
+      };
+
+      const res = await fetch("http://localhost:3031/api/order", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token && { Authorization: `Bearer ${token}` }),
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.message || "فشل إرسال الطلب");
+
+      toast({
+        title: "تم إرسال الطلب",
+        description: "سيتم التواصل معك قريباً لتأكيد الطلب",
+      });
+
+      console.log("Created Order:", data.order);
+
+      // Reset form
+      setFormData({
+        name: "",
+        phone: "",
+        secondPhone: "",
+        email: "",
+        package: "",
+        deliveryRegion: "",
+        city: "",
+        user: false, // reset back
+      });
+
+      navigate("/");
+    } catch (err: any) {
+      toast({
+        title: "خطأ",
+        description: err.message,
+        variant: "destructive",
+      });
+    }
   };
 
   const handleReviewSubmit = async (e: React.FormEvent) => {
@@ -127,27 +183,6 @@ const PurchasePage = () => {
   const selectedFee = user ? deliveryFeeSubscription : deliveryFee
   const totalPrice = formData.package ? packages[formData.package as keyof typeof packages].price + selectedFee : 0;
 
-  const testimonials = [
-    {
-      name: "أم أحمد",
-      rating: 5,
-      text: "منتج رائع، ساعد في تحسين العلاقة بشكل كبير. سرية تامة في التوصيل.",
-      city: "رام الله"
-    },
-    {
-      name: "زوجة سالم",
-      rating: 5, 
-      text: "نتائج ممتازة وسريعة. زوجي أصبح أكثر ثقة. شكراً لكم",
-      city: "نابلس"
-    },
-    {
-      name: "أم محمد",
-      rating: 5,
-      text: "أفضل استثمار في علاقتنا. تأثير يدوم 24 ساعة كما وعدتم",
-      city: "الخليل"
-    }
-  ];
-
   const whatsappScreenshots = [
     { id: 1, alt: "رسالة واتساب من زبونة راضية", src: "/placeholder.svg" },
     { id: 2, alt: "تقييم إيجابي عبر الواتساب", src: "/placeholder.svg" },
@@ -157,6 +192,18 @@ const PurchasePage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      const user = JSON.parse(storedUser);
+      setFormData((prev) => ({
+        ...prev,
+        name: user.username || "",
+        phone: user.phone || "",
+        secondPhone: user.secondPhone || "",
+        email: user.email || "",
+        deliveryRegion: user.city || "", // because your model has city = الضفة/القدس/الداخل
+      }));
+    }
     const fetchReviews = async () => {
       try {
         const res = await fetch("http://localhost:3031/api/review/get-approved-reviews");
@@ -233,7 +280,7 @@ const PurchasePage = () => {
 
                 {/* Second Phone */}
                 <div className="space-y-2">
-                  <Label htmlFor="secondPhone">رقم هاتف إضافي</Label>
+                  <Label htmlFor="secondPhone">رقم هاتف إضافي (إختياري)</Label>
                   <Input
                     id="secondPhone"
                     type="tel"
@@ -244,7 +291,7 @@ const PurchasePage = () => {
 
                 {/* Email */}
                 <div className="space-y-2">
-                  <Label htmlFor="email">البريد الإلكتروني</Label>
+                  <Label htmlFor="email">البريد الإلكتروني (إختياري)</Label>
                   <Input
                     id="email"
                     type="email"
@@ -253,13 +300,24 @@ const PurchasePage = () => {
                   />
                 </div>
 
-                {/* City */}
 
+                {/* Address */}
+                <div className="space-y-2">
+                  <Label htmlFor="region">المدينة *</Label>
+                  <Input
+                      id="region"
+                      type="region"
+                      value={formData.deliveryRegion}
+                      onChange={(e) => setFormData({ ...formData, deliveryRegion: e.target.value })}
+                  />
+                </div>
+
+                {/* City */}
 
                 { user
                     ?
                     <div className="space-y-3">
-                      <Label htmlFor="city">المدينة *</Label>
+                      <Label htmlFor="city">المنطقة *</Label>
                       <Select onValueChange={handleCityChange}>
                         <SelectTrigger>
                           <SelectValue placeholder="اختاري المدينة" />
@@ -273,7 +331,7 @@ const PurchasePage = () => {
                     </div>
                     :
                     <div className="space-y-3">
-                      <Label htmlFor="city">المدينة *</Label>
+                      <Label htmlFor="city">المنطقة *</Label>
                       <Select onValueChange={handleCityChange}>
                         <SelectTrigger>
                           <SelectValue placeholder="اختاري المدينة" />
@@ -422,7 +480,11 @@ const PurchasePage = () => {
                           "{testimonial.contentText}"
                         </p>
                         <div className="space-y-1">
-                          <div className="font-semibold text-luxury">{testimonial.name}</div>
+                          <div className="font-semibold text-luxury">
+                            <span className="blur-sm select-none">
+                              {testimonial.name}
+                            </span>
+                          </div>
                           <div className="text-sm text-muted-foreground">{testimonial.city}</div>
                         </div>
                       </CardContent>

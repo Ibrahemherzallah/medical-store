@@ -12,6 +12,22 @@ const orderSchema = new mongoose.Schema(
             enum: ["1-pill", "3-pills"],
             required: true
         },
+        name: {
+            type: String,
+            required: true
+        },
+        phone: {
+            type: String,
+            required: true
+        },
+        secondPhone: {
+            type: String,
+            required: false
+        },
+        email: {
+            type: String,
+            required: false
+        },
         packagePrice: {
             type: Number,
             required: true
