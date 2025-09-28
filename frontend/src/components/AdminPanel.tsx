@@ -197,25 +197,27 @@ const AdminPanel = () => {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>رقم الطلب</TableHead>
                       <TableHead>اسم العميل</TableHead>
+                      <TableHead>رقم العميل</TableHead>
+                      <TableHead>رقم العميل الثاني</TableHead>
                       <TableHead>البريد الإلكتروني</TableHead>
                       <TableHead>المنتج</TableHead>
-                      <TableHead>المبلغ</TableHead>
-                      <TableHead>الحالة</TableHead>
+                      <TableHead>سعر المنتج</TableHead>
+                      <TableHead>المبلغ الكلي</TableHead>
                       <TableHead>التاريخ</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {mockOrders.map((order) => (
-                      <TableRow key={order.id}>
-                        <TableCell className="font-medium">#{order.id}</TableCell>
-                        <TableCell>{order.customerName}</TableCell>
-                        <TableCell>{order.email}</TableCell>
-                        <TableCell>{order.product}</TableCell>
-                        <TableCell>{order.amount}</TableCell>
-                        <TableCell>{getStatusBadge(order.status)}</TableCell>
-                        <TableCell>{order.date}</TableCell>
+                    {orders?.map((order) => (
+                      <TableRow key={order._id}>
+                        <TableCell>{order?.name}</TableCell>
+                        <TableCell>{order?.phone}</TableCell>
+                        <TableCell>{order?.secondPhone || '--------------------'}</TableCell>
+                        <TableCell>{order?.email || '--------------------'}</TableCell>
+                        <TableCell>{order?.package}</TableCell>
+                        <TableCell>{order?.packagePrice}</TableCell>
+                        <TableCell>{order?.totalPrice}</TableCell>
+                        <TableCell>{order?.createdAt.split("T")[0]}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
