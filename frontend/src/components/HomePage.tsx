@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Heart, Shield, Clock, Truck, Star } from 'lucide-react';
 import { motion } from 'framer-motion';
 import heroImage from '@/assets/hero-couple.jpg';
-import { useNavigate } from 'react-router-dom';
+import { Link ,useNavigate } from 'react-router-dom';
 
 const HomePage = () => {
 
@@ -58,7 +58,7 @@ const HomePage = () => {
       <nav className="container mx-auto px-4 py-6">
         <div className="flex justify-between items-center">
           <div className="text-2xl font-bold text-luxury">
-            Ignite 24
+            Ignite
           </div>
 
           <div className="flex gap-4">
@@ -103,7 +103,7 @@ const HomePage = () => {
                   <h2 className="text-2xl font-bold text-luxury">
                     مرحباً، {user.name || user.username} 👋
                   </h2>
-                  <p className="text-muted-foreground">سعيدون بعودتك إلى Ignite 24 💖</p>
+                  <p className="text-muted-foreground">سعيدون بعودتك إلى Ignite 💖</p>
                 </div>
             )}
             <div className="space-y-4">
@@ -119,7 +119,7 @@ const HomePage = () => {
               </h1>
               
               <p className="text-lg text-muted-foreground leading-relaxed">
-                💖 فاجئي زوجك بـ Ignite 24... هدية صغيرة تعيد الشغف لحياتكم الزوجية.
+                💖 فاجئي زوجك بـ Ignite ... هدية صغيرة تعيد الشغف لحياتكم الزوجية.
                 شرارة جديدة تدوم 24 ساعة كاملة... طبيعية وآمنة 100%.
                 لأن سعادتك بتبدأ من سعادته 💕
               </p>
@@ -186,7 +186,7 @@ const HomePage = () => {
       >
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-luxury mb-4">لماذا Ignite 24؟</h2>
+            <h2 className="text-3xl font-bold text-luxury mb-4">لماذا Ignite ؟</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               المنتج المثالي لتحسين العلاقة الحميمة بطريقة آمنة وفعالة
             </p>
@@ -218,7 +218,7 @@ const HomePage = () => {
       >
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-luxury mb-4">اختاري الباقة المناسبة</h2>
+            <h2 className="text-3xl font-bold text-luxury mb-4">اختار الباقة المناسبة</h2>
             <p className="text-muted-foreground">أسعار مميزة مع توصيل سري</p>
           </div>
 
@@ -260,7 +260,7 @@ const HomePage = () => {
                   <p className="text-muted-foreground mb-6">توفيري 50 شيكل!</p>
                   
                   <Button variant="luxury" size="lg" className="w-full mb-6" onClick={() => navigate('/purchase')}>
-                    فاجئيه الآن
+                    اطلبه الآن
                   </Button>
                   
                   <div className="text-sm text-muted-foreground space-y-2">
@@ -330,11 +330,11 @@ const HomePage = () => {
             {/* Membership Card */}
             <Card className="bg-gradient-romantic text-romantic-foreground shadow-luxury">
               <CardContent className="p-8 text-center">
-                <h2 className="text-3xl font-bold mb-4">انتسبي معنا لأسعار أفضل</h2>
+                <h2 className="text-3xl font-bold mb-4">انتسب معنا لأسعار أفضل</h2>
                 <p className="text-xl mb-6 opacity-90">
                   {user
-                      ? "🎉 الآن لديك توصيل مجاني مع Ignite 24!"
-                      : "انضمي لعائلتنا لتحصلي على توصيل مجاني."}
+                      ? "🎉 الآن لديك توصيل مجاني مع Ignite !"
+                      : "انضم لعائلتنا لتحصل على توصيل مجاني."}
                 </p>
                 <div className="space-y-3 mb-8 text-sm">
                   <div>✓ خصومات حصرية على جميع المنتجات</div>
@@ -343,7 +343,7 @@ const HomePage = () => {
                   <div>✓ محتوى حصري للأعضاء فقط</div>
                 </div>
                 <Button size="lg" variant="luxury" onClick={() => navigate(user ? '/articles' : '/signup' )}>
-                  {user ? 'تصفحي المقالات' : 'انضمي الآن - مجاناً'}
+                  {user ? 'تصفح المقالات' : 'انضم الآن - مجاناً'}
 
                 </Button>
               </CardContent>
@@ -392,12 +392,12 @@ const HomePage = () => {
         viewport={{ once: true }}
       >
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-4">اشعلي الشغف اليوم</h2>
+          <h2 className="text-3xl font-bold mb-4">اشعل الشغف اليوم</h2>
           <p className="text-xl mb-8 opacity-90">
-            احصلي على Ignite 24 بسرية تامة وتوصيل سريع
+            احصل على Ignite  بسرية تامة وتوصيل سريع
           </p>
           <Button size="hero" variant="luxury" className="text-lg px-12 py-6" onClick={() => navigate('/purchase')}>
-            فاجئيه الآن - توصيل سري
+            اطلب الآن - توصيل سري
           </Button>
         </div>
       </motion.section>
@@ -407,31 +407,49 @@ const HomePage = () => {
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-3 gap-8">
             <div>
-              <h3 className="text-xl font-bold mb-4">Ignite 24</h3>
-              <p className="opacity-80">طاقة تدوم... شغف يستمر</p>
+              <h3 className="text-xl font-bold mb-4">Ignite</h3>
+              <p className="opacity-80"> طاقة تدوم... شغف يستمر<br />اشعلي شغف زوجك بطريقة آمنة</p>
             </div>
             <div>
               <h4 className="font-semibold mb-4">روابط سريعة</h4>
-              <div className="space-y-2 opacity-80">
-                <div>المنتج</div>
-                <div>طريقة الطلب</div>
-                <div>التوصيل</div>
-                <div>اتصل بنا</div>
+              <div className="space-y-2 opacity-80 ">
+                <div>
+                  <Link to={'/purchase'}>المنتج</Link>
+                </div>
+                <div>
+                  <Link to={'/articles'}>المقالات الحصرية</Link>
+                </div>
+                <div>
+                  <Link to={'/privacy'}>سياسة الخصوصية</Link>
+                </div>
               </div>
             </div>
             <div>
               <h4 className="font-semibold mb-4">تواصل معنا</h4>
               <div className="space-y-2 opacity-80">
-                <div>تواصل مع معتصم</div>
-                <div>تواصل مع ياسمين</div>
+                <a
+                    href="https://wa.me/+972569645164"  //
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block hover:underline"
+                >
+                  تواصل مع معتصم
+                </a>
+                <a
+                    href="https://wa.me/0987654321"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block hover:underline"
+                >
+                  تواصلي مع ياسمين
+                </a>
                 <div>توصيل سري وآمن</div>
-                <div className="cursor-pointer hover:opacity-100 transition-opacity" onClick={() => navigate('/privacy')}>ضمان الخصوصية</div>
               </div>
             </div>
           </div>
           
           <div className="border-t border-luxury-foreground/20 mt-8 pt-8 text-center opacity-60">
-            <p>&copy; 2024 Ignite 24. جميع الحقوق محفوظة.</p>
+            <p>&copy; 2024 Ignite. جميع الحقوق محفوظة.</p>
           </div>
         </div>
       </footer>

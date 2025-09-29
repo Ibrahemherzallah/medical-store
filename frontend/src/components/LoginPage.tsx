@@ -79,7 +79,7 @@ const LoginPage = () => {
       <nav className="container mx-auto px-4 py-6">
         <div className="flex justify-between items-center">
           <div className="text-2xl font-bold text-luxury">
-            Ignite 24
+            Ignite
           </div>
           <Button variant="outline" onClick={() => navigate('/')}>
             العودة للرئيسية
@@ -91,7 +91,7 @@ const LoginPage = () => {
         <Card className="shadow-luxury">
           <CardHeader className="text-center">
             <CardTitle className="text-3xl text-luxury mb-2">تسجيل الدخول</CardTitle>
-            <p className="text-muted-foreground">ادخلي للوصول للمقالات الحصرية</p>
+            <p className="text-muted-foreground">ادخل للوصول للمقالات الحصرية وافضل العروض</p>
           </CardHeader>
           
           <CardContent className="space-y-6">
@@ -101,7 +101,7 @@ const LoginPage = () => {
                 <Input
                   id="phone"
                   type="text"
-                  placeholder="أدخلي رقم الهاتف"
+                  placeholder="أدخل رقم الهاتف"
                   value={formData.phone}
                   onChange={(e) => handleInputChange('phone', e.target.value)}
                   required
@@ -114,7 +114,7 @@ const LoginPage = () => {
                 <Input
                   id="password"
                   type="password"
-                  placeholder="أدخلي كلمة المرور"
+                  placeholder="أدخل كلمة المرور"
                   value={formData.password}
                   onChange={(e) => handleInputChange('password', e.target.value)}
                   required

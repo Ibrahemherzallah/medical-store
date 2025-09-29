@@ -224,7 +224,7 @@ const PurchasePage = () => {
       <nav className="container mx-auto px-4 py-6">
         <div className="flex justify-between items-center">
           <div className="text-2xl font-bold text-luxury">
-            Ignite 24
+            Ignite
           </div>
           <Button variant="ghost" onClick={() => navigate('/')}>
             العودة للرئيسية
@@ -237,16 +237,16 @@ const PurchasePage = () => {
           {/* Order Form */}
           <Card className="shadow-luxury">
             <CardHeader>
-              <CardTitle className="text-2xl text-luxury text-center">اطلبي الآن</CardTitle>
+              <CardTitle className="text-2xl text-luxury text-center">اطلب الآن</CardTitle>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Package Selection */}
                 <div className="space-y-3">
-                  <Label htmlFor="package">اختاري الباقة *</Label>
+                  <Label htmlFor="package">اختار الباقة *</Label>
                   <Select onValueChange={(value) => setFormData({ ...formData, package: value })}>
                     <SelectTrigger>
-                      <SelectValue placeholder="اختاري الباقة" />
+                      <SelectValue placeholder="اختار الباقة" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="single">حبة واحدة - 50 شيكل</SelectItem>
@@ -389,12 +389,12 @@ const PurchasePage = () => {
                     <DialogTrigger asChild>
                       <Button variant="outline" size="sm">
                         <MessageSquarePlus className="w-4 h-4 ml-2" />
-                        أضيفي تقييمك
+                        أضيف تقييمك
                       </Button>
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-md" dir="rtl">
                       <DialogHeader>
-                        <DialogTitle className="text-center">أضيفي تقييمك</DialogTitle>
+                        <DialogTitle className="text-center">أضيف تقييمك</DialogTitle>
                       </DialogHeader>
                       <form onSubmit={handleReviewSubmit} className="space-y-4">
                         <div className="space-y-2">
@@ -420,7 +420,7 @@ const PurchasePage = () => {
                             id="reviewName"
                             value={reviewData.name}
                             onChange={(e) => setReviewData({ ...reviewData, name: e.target.value })}
-                            placeholder="أدخلي اسمك"
+                            placeholder="أدخل اسمك"
                             required
                           />
                         </div>
@@ -442,7 +442,7 @@ const PurchasePage = () => {
                             id="reviewText"
                             value={reviewData.text}
                             onChange={(e) => setReviewData({ ...reviewData, text: e.target.value })}
-                            placeholder="شاركي تجربتك معنا..."
+                            placeholder="شارك تجربتك معنا بخصوصية عالية..."
                             className="min-h-[100px]"
                             required
                           />

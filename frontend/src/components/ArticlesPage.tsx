@@ -64,7 +64,7 @@ const ArticlesPage = () => {
       <nav className="container mx-auto px-4 py-6">
         <div className="flex justify-between items-center">
           <div className="text-2xl font-bold text-luxury">
-            Ignite 24
+            Ignite
           </div>
           <div className="flex gap-4">
             <Button variant="outline" onClick={() =>  navigate('/')}>
@@ -114,7 +114,11 @@ const ArticlesPage = () => {
                 <p className="text-muted-foreground text-sm leading-relaxed mb-4">
                   {article.excerpt}
                 </p>
-                <Button variant="outline" className="w-full">
+                <Button
+                    variant="outline"
+                    className="w-full"
+                    onClick={() => navigate(`/articles/${article.id}`)}
+                >
                   قراءة المقال
                 </Button>
               </CardContent>
@@ -128,13 +132,10 @@ const ArticlesPage = () => {
             <CardContent className="p-8">
               <h2 className="text-2xl font-bold mb-4">هل تريدين المزيد من المحتوى الحصري؟</h2>
               <p className="mb-6 opacity-90">
-                انضمي لعائلة Ignite 24 واحصلي على محتوى جديد كل أسبوع
+                انضم لعائلة Ignite واحصلي على محتوى جديد كل أسبوع
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button size="lg" variant="luxury" onClick={() => navigate('/signup')}>
-                  انضمي للعضوية
-                </Button>
-                <Button size="lg" variant="outline" className="bg-transparent border-romantic-foreground text-romantic-foreground hover:bg-romantic-foreground hover:text-romantic">
+                <Button size="lg" variant="outline" className="bg-transparent border-romantic-foreground text-romantic-foreground hover:bg-romantic-foreground hover:text-romantic" onClick={()=>{navigate('/')}}>
                   تسوقي المنتج
                 </Button>
               </div>

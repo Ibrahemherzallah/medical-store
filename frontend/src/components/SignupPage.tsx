@@ -51,7 +51,7 @@ const SignupPage = () => {
 
       toast({
         title: "تم التسجيل بنجاح!",
-        description: "مرحباً بك في عائلة Ignite 24. ستحصلين على أسعار مميزة ومقالات حصرية.",
+        description: "مرحباً بك في عائلة Ignite. ستحصلين على أسعار مميزة ومقالات حصرية.",
       });
 
       console.log("Server response:", data);
@@ -87,7 +87,7 @@ const SignupPage = () => {
       <nav className="container mx-auto px-4 py-6">
         <div className="flex justify-between items-center">
           <div className="text-2xl font-bold text-luxury">
-            Ignite 24
+            Ignite
           </div>
           <Button variant="outline" onClick={() => navigate('/')}>
             العودة للرئيسية
@@ -98,8 +98,8 @@ const SignupPage = () => {
       <div className="container mx-auto px-4 max-w-2xl">
         <Card className="shadow-luxury">
           <CardHeader className="text-center">
-            <CardTitle className="text-3xl text-luxury mb-2">انضمي لعائلة Ignite 24</CardTitle>
-            <p className="text-muted-foreground">احصلي على أسعار مميزة ومقالات حصرية لتحسين العلاقة الزوجية</p>
+            <CardTitle className="text-3xl text-luxury mb-2">انضم لعائلة Ignite </CardTitle>
+            <p className="text-muted-foreground">احصل على أسعار مميزة ومقالات حصرية لتحسين العلاقة الزوجية</p>
           </CardHeader>
           
           <CardContent className="space-y-6">
@@ -109,7 +109,7 @@ const SignupPage = () => {
                 <Input
                   id="username"
                   type="text"
-                  placeholder="أدخلي اسم المستخدم"
+                  placeholder="أدخل اسم المستخدم"
                   value={formData.username}
                   onChange={(e) => handleInputChange('username', e.target.value)}
                   required
@@ -211,7 +211,7 @@ const SignupPage = () => {
               </div>
 
               <Button type="submit" size="lg" variant="romantic" className="w-full">
-                انضمي الآن
+                انضم الآن
               </Button>
 
               <p className="text-xs text-muted-foreground text-center">

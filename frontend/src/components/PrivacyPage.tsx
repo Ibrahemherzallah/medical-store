@@ -11,7 +11,7 @@ const PrivacyPage = () => {
       <nav className="container mx-auto px-4 py-6">
         <div className="flex justify-between items-center">
           <div className="text-2xl font-bold text-luxury">
-            Ignite 24
+            Ignite
           </div>
           <Button variant="ghost" onClick={() => navigate('/')}>
             العودة للرئيسية
