@@ -249,9 +249,9 @@ const AdminPanel = () => {
                     {users?.map((user) => (
                       <TableRow key={user._id}>
                         <TableCell className="font-medium">{user.username}</TableCell>
-                        <TableCell>{user.email}</TableCell>
+                        <TableCell>{user.email || '--------------------'}</TableCell>
                         <TableCell>{user.phone}</TableCell>
-                        <TableCell>{user.secondPhone}</TableCell>
+                        <TableCell>{user.secondPhone || '--------------------'}</TableCell>
                         <TableCell>{user.address}</TableCell>
                         <TableCell>{user.city}</TableCell>
                         <TableCell>{user.createdAt.split("T")[0]}</TableCell>

@@ -12,6 +12,8 @@ import ArticlesPage from "./components/ArticlesPage";
 import AdminPanel from "./components/AdminPanel";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "@/protect.tsx";
+import ArticleDetailPage from "./components/ArticleDetailPage";
+import ScrollToTop from "./ScrollToTop";
 
 const queryClient = new QueryClient();
 
@@ -21,6 +23,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/purchase" element={<PurchasePage />} />
@@ -28,14 +31,24 @@ const App = () => (
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/login" element={<LoginPage />} />
           {/* Protected: only logged-in users */}
-          <Route
-              path="/articles"
-              element={
-                <ProtectedRoute>
-                  <ArticlesPage />
-                </ProtectedRoute>
-              }
-          />
+            <Route
+                path="/articles"
+                element={
+                    <ProtectedRoute>
+                        <ArticlesPage />
+                    </ProtectedRoute>
+                }
+            />
+
+            <Route
+                path="/articles/:id"
+                element={
+                    <ProtectedRoute>
+                        <ArticleDetailPage />
+                    </ProtectedRoute>
+                }
+            />
+
 
           {/* Admin only */}
           <Route
