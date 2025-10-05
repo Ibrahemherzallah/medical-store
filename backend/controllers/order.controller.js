@@ -3,12 +3,12 @@ import Order from "../models/order.model.js";
 // Create new order
 export const createOrder = async (req, res) => {
     try {
-        const { name, phone, secondPhone, email, package: selectedPackage, city:deliveryRegion, deliveryRegion:city, user } = req.body;
+        const { name, phone, secondPhone, email, package: selectedPackage, city:deliveryRegion, deliveryRegion:city, user, userId } = req.body;
         console.log("req.user is : ",user)
         // Map package to price
         let packagePrice = 0;
         if (selectedPackage === "single") packagePrice = 50;
-        if (selectedPackage === "triple") packagePrice = 100;
+        if (selectedPackage === "triple") packagePrice = 150;
 
         // Delivery price (based on region and login status)
         let deliveryPrice = 0;
@@ -26,8 +26,8 @@ export const createOrder = async (req, res) => {
         const totalPrice = packagePrice + deliveryPrice;
 
         const order = new Order({
-            userId: user ? user._id : null,
-            package: selectedPackage === "single" ? "1-pill" : "3-pills",
+            userId,
+            package: selectedPackage === "single" ? "1-pill" : "4-pills",
             packagePrice,
             name,
             phone,
@@ -50,7 +50,10 @@ export const createOrder = async (req, res) => {
 // Get all orders (admin only)
 export const getOrders = async (req, res) => {
     try {
-        const orders = await Order.find().populate("userId", "username phone email");
+        const orders = await Order.find()
+            .populate("userId", "username phone email")
+            .sort({ createdAt: -1 }); // الأجدد أولاً
+
         res.json(orders);
     } catch (error) {
         res.status(500).json({ message: "خطأ في جلب الطلبات", error: error.message });
@@ -66,5 +69,28 @@ export const getUserOrders = async (req, res) => {
         res.json(orders);
     } catch (error) {
         res.status(500).json({ message: "Error fetching user orders", error: error.message });
+    }
+};
+
+
+// Update order delivered status
+export const updateOrderStatus = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { delivered } = req.body;
+
+        const order = await Order.findByIdAndUpdate(
+            id,
+            { delivered },
+            { new: true }
+        );
+
+        if (!order) {
+            return res.status(404).json({ message: "الطلب غير موجود" });
+        }
+
+        res.json({ message: "تم تحديث حالة الطلب", order });
+    } catch (error) {
+        res.status(500).json({ message: "خطأ في تحديث حالة الطلب", error: error.message });
     }
 };

@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Users, ShoppingCart, MessageSquare, Star } from "lucide-react";
+import {Users, ShoppingCart, MessageSquare, Star, Clock, DollarSign} from "lucide-react";
 import {useNavigate} from "react-router-dom";
 
 // Mock data
@@ -130,16 +130,27 @@ const AdminPanel = () => {
 
           <div className="flex gap-4">
             {localStorage.getItem("user") && (
-                <Button
-                    variant="outline"
+                <div className={'flex gap-3'}>
+                  <Button
+                    variant="luxury"
                     onClick={() => {
-                      localStorage.removeItem("user");
-                      localStorage.removeItem("token");
-                      navigate("/login");
+                      navigate("/");
                     }}
                 >
-                  تسجيل الخروج
+                  العودة للرئيسية
                 </Button>
+                  <Button
+                      variant="outline"
+                      onClick={() => {
+                        localStorage.removeItem("user");
+                        localStorage.removeItem("token");
+                        navigate("/login");
+                      }}
+                  >
+                    تسجيل الخروج
+                  </Button>
+                </div>
+
             )}
           </div>
         </div>
@@ -147,7 +158,8 @@ const AdminPanel = () => {
 
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          {/* إجمالي الطلبات */}
           <Card className="hover-scale">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">إجمالي الطلبات</CardTitle>
@@ -158,6 +170,7 @@ const AdminPanel = () => {
             </CardContent>
           </Card>
 
+          {/* المستخدمين */}
           <Card className="hover-scale">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">المستخدمين المسجلين</CardTitle>
@@ -168,6 +181,7 @@ const AdminPanel = () => {
             </CardContent>
           </Card>
 
+          {/* التقييمات */}
           <Card className="hover-scale">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">التقييمات</CardTitle>
@@ -175,6 +189,47 @@ const AdminPanel = () => {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{reviews?.length}</div>
+            </CardContent>
+          </Card>
+
+          {/* الطلبات غير المسلمة */}
+          <Card className="hover-scale">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">الطلبات غير المسلمة</CardTitle>
+              <Clock className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {orders?.filter((o) => !o.delivered).length}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Total Profit Card */}
+        <div className="mb-8">
+          <Card className="hover-scale bg-green-50 border-green-200">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-green-700">
+                إجمالي الأرباح (من الطلبات المسلمة فقط)
+              </CardTitle>
+              <DollarSign className="h-5 w-5 text-green-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold text-green-800">
+                {
+                  orders
+                      ?.filter((o) => o.delivered) // فقط الطلبات المسلمة
+                      .reduce((acc, o) => {
+                        if (!o.userId) {
+                          return acc + o.packagePrice; // زبون غير مسجل
+                        } else {
+                          return acc + (o.packagePrice - 20); // زبون مسجل
+                        }
+                      }, 0)
+                }{" "}
+                شيكل
+              </div>
             </CardContent>
           </Card>
         </div>
@@ -198,6 +253,7 @@ const AdminPanel = () => {
                   <TableHeader>
                     <TableRow>
                       <TableHead>اسم العميل</TableHead>
+                      <TableHead>المدينة</TableHead>
                       <TableHead>رقم العميل</TableHead>
                       <TableHead>رقم العميل الثاني</TableHead>
                       <TableHead>البريد الإلكتروني</TableHead>
@@ -205,20 +261,51 @@ const AdminPanel = () => {
                       <TableHead>سعر المنتج</TableHead>
                       <TableHead>المبلغ الكلي</TableHead>
                       <TableHead>التاريخ</TableHead>
+                      <TableHead>تم التوصيل</TableHead> {/* ✅ العمود الجديد */}
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {orders?.map((order) => (
-                      <TableRow key={order._id}>
-                        <TableCell>{order?.name}</TableCell>
-                        <TableCell>{order?.phone}</TableCell>
-                        <TableCell>{order?.secondPhone || '--------------------'}</TableCell>
-                        <TableCell>{order?.email || '--------------------'}</TableCell>
-                        <TableCell>{order?.package}</TableCell>
-                        <TableCell>{order?.packagePrice}</TableCell>
-                        <TableCell>{order?.totalPrice}</TableCell>
-                        <TableCell>{order?.createdAt.split("T")[0]}</TableCell>
-                      </TableRow>
+                        <TableRow
+                            key={order._id}
+                            className={order.delivered ? "bg-green-100" : ""}
+                        >
+                          <TableCell>{order?.name}</TableCell>
+                          <TableCell>{order?.city}</TableCell>
+                          <TableCell>{order?.phone}</TableCell>
+                          <TableCell>{order?.secondPhone || '--------------------'}</TableCell>
+                          <TableCell>{order?.email || '--------------------'}</TableCell>
+                          <TableCell>{order?.package}</TableCell>
+                          <TableCell>{order?.packagePrice}</TableCell>
+                          <TableCell>{order?.totalPrice}</TableCell>
+                          <TableCell>{order?.createdAt.split("T")[0]}</TableCell>
+
+                          {/* ✅ العمود الجديد */}
+                          <TableCell>
+                            <input
+                                type="checkbox"
+                                checked={order.delivered}
+                                onChange={async (e) => {
+                                  const newDelivered = e.target.checked;
+
+                                  // 1. تحديث في السيرفر
+                                  const res = await fetch(`http://localhost:3031/api/order/${order._id}/status`, {
+                                    method: "PUT",
+                                    headers: { "Content-Type": "application/json" },
+                                    body: JSON.stringify({ delivered: newDelivered }),
+                                  });
+
+                                  if (res.ok) {
+                                    setOrders((prev) =>
+                                        prev.map((o) =>
+                                            o._id === order._id ? { ...o, delivered: newDelivered } : o
+                                        )
+                                    );
+                                  }
+                                }}
+                            />
+                          </TableCell>
+                        </TableRow>
                     ))}
                   </TableBody>
                 </Table>
@@ -274,6 +361,7 @@ const AdminPanel = () => {
                   <TableHeader>
                     <TableRow>
                       <TableHead>الاسم</TableHead>
+                      <TableHead>المدينة</TableHead>
                       <TableHead>التقييم</TableHead>
                       <TableHead>التعليق</TableHead>
                       <TableHead>التاريخ</TableHead>
@@ -283,7 +371,8 @@ const AdminPanel = () => {
                   <TableBody>
                     {reviews?.map((review) => (
                       <TableRow key={review.id}>
-                        <TableCell className="font-medium">{review.name}</TableCell>
+                        <TableCell className="font-medium">{review.name || '--------------------'}</TableCell>
+                        <TableCell className="font-medium">{review.city || '--------------------'}</TableCell>
                         <TableCell>
                           <div className="flex gap-1">
                             {renderStars(review.rating)}
