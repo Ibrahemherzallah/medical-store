@@ -5,14 +5,15 @@ import { Badge } from '@/components/ui/badge';
 import { Heart, Shield, Clock, Truck, Star } from 'lucide-react';
 import { motion } from 'framer-motion';
 import heroImage from '@/assets/hero-couple.jpg';
+import heroVideo from '@/assets/gif.mp4';
 import { Link ,useNavigate } from 'react-router-dom';
-
+import { MessageCircle, Facebook, Instagram, Music2 } from "lucide-react"
 const HomePage = () => {
 
   const features = [
     {
       icon: <Clock className="w-6 h-6" />,
-      title: "تأثير يدوم 24 ساعة",
+      title: "تأثير يدوم +48 ساعة",
       description: "مفعول طويل الأمد للحصول على أفضل النتائج"
     },
     {
@@ -57,13 +58,33 @@ const HomePage = () => {
       {/* Navigation */}
       <nav className="container mx-auto px-4 py-6">
         <div className="flex justify-between items-center">
-          <div className="text-2xl font-bold text-luxury">
-            Ignite
-          </div>
+          <div className="flex items-center gap-3">
+            {/* اللوجو (GIF) */}
+            <video
+                src={heroVideo}
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-20 h-20 object-contain rounded-full"
+            />
 
+            {/* النص */}
+            <p className="text-lg font-semibold bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 bg-clip-text text-transparent font-[Cairo]">
+              طاقة تدوم... شغف يستمر
+            </p>
+          </div>
           <div className="flex gap-4">
             {localStorage.getItem("user") ? (
-                <>
+                <div className={'flex gap-3'}>
+                  <Button
+                      variant="luxury"
+                      onClick={() => {
+                        navigate("/admin");
+                      }}
+                  >
+                    لوحة التحكم
+                  </Button>
                   <Button
                       variant="outline"
                       onClick={() => {
@@ -74,7 +95,7 @@ const HomePage = () => {
                   >
                     تسجيل الخروج
                   </Button>
-                </>
+                </div>
             ) : (
                 <>
                   <Button variant="outline" onClick={() => navigate("/login")}>
@@ -98,7 +119,7 @@ const HomePage = () => {
       >
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-8">
-            {user && (
+            {user && user.role == 'user' && (
                 <div className="p-4 bg-gradient-soft rounded-lg shadow-elegant mb-6">
                   <h2 className="text-2xl font-bold text-luxury">
                     مرحباً، {user.name || user.username} 👋
@@ -120,13 +141,18 @@ const HomePage = () => {
               
               <p className="text-lg text-muted-foreground leading-relaxed">
                 💖 فاجئي زوجك بـ Ignite ... هدية صغيرة تعيد الشغف لحياتكم الزوجية.
-                شرارة جديدة تدوم 24 ساعة كاملة... طبيعية وآمنة 100%.
+                شرارة جديدة تدوم +48 ساعة كاملة... طبيعية وآمنة 100%.
                 لأن سعادتك بتبدأ من سعادته 💕
               </p>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button size="hero" variant="romantic" className="text-lg px-8 py-4" onClick={() => navigate('/purchase')}>
+              <Button
+                  size="hero"
+                  variant="romantic"
+                  className="text-lg px-8 py-4"
+                  onClick={() => navigate('/purchase')}
+              >
                 فاجئيه الآن
               </Button>
 
@@ -144,6 +170,16 @@ const HomePage = () => {
               >
                 قراءة المقالات
               </Button>
+
+              {/* زر رؤية المنتج */}
+              <Button
+                  size="lg"
+                  variant="luxury"
+                  className="text-lg px-8 py-4 flex items-center gap-2"
+                  onClick={() => navigate("/product")}
+              >
+                👀 رؤية المنتج
+              </Button>
             </div>
 
             <div className="flex items-center gap-8 pt-4">
@@ -152,7 +188,7 @@ const HomePage = () => {
                 <div className="text-sm text-muted-foreground">زوجة راضية</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-luxury">24 ساعة</div>
+                <div className="text-2xl font-bold text-luxury">+48 ساعة</div>
                 <div className="text-sm text-muted-foreground">مدة التأثير</div>
               </div>
               <div className="text-center">
@@ -169,7 +205,7 @@ const HomePage = () => {
               className="rounded-2xl shadow-luxury w-full animate-float"
             />
             <div className="absolute -bottom-6 -right-6 bg-primary text-primary-foreground p-6 rounded-xl shadow-elegant animate-glow">
-              <div className="text-3xl font-bold">24h</div>
+              <div className="text-3xl font-bold"> +48  ساعة</div>
               <div className="text-sm">مفعول طويل</div>
             </div>
           </div>
@@ -238,7 +274,7 @@ const HomePage = () => {
                   </Button>
                   
                   <div className="text-sm text-muted-foreground space-y-2">
-                    <div>✓ تأثير يدوم 24 ساعة</div>
+                    <div>✓ تأثير يدوم +48 ساعة</div>
                     <div>✓ آمن ومرخص</div>
                     <div>✓ توصيل سري</div>
                   </div>
@@ -246,25 +282,36 @@ const HomePage = () => {
               </CardContent>
             </Card>
 
-            {/* Three Pills Package */}
+            {/* Four Pills Package */}
             <Card className="relative hover:shadow-luxury transition-elegant border-romantic">
-              <Badge className="absolute -top-3 right-4 bg-gradient-romantic text-romantic-foreground">
-                الأكثر طلباً
-              </Badge>
+              <div className="absolute -top-3 right-4 flex gap-2">
+                <Badge className="bg-gradient-romantic text-romantic-foreground">
+                  الأكثر طلباً
+                </Badge>
+                <Badge className="bg-red-500 text-white animate-bounce">
+                  خصم 25%
+                </Badge>
+              </div>
+
               <CardContent className="p-8">
                 <div className="text-center">
-                  <h3 className="text-2xl font-bold text-luxury mb-2">ثلاث حبات</h3>
+                  <h3 className="text-2xl font-bold text-luxury mb-2">أربع حبات</h3>
                   <div className="text-4xl font-bold text-romantic mb-4">
-                    100 <span className="text-lg">شيكل</span>
+                    150 <span className="text-lg">شيكل</span>
                   </div>
                   <p className="text-muted-foreground mb-6">توفيري 50 شيكل!</p>
-                  
-                  <Button variant="luxury" size="lg" className="w-full mb-6" onClick={() => navigate('/purchase')}>
+
+                  <Button
+                      variant="luxury"
+                      size="lg"
+                      className="w-full mb-6"
+                      onClick={() => navigate('/purchase')}
+                  >
                     اطلبه الآن
                   </Button>
-                  
+
                   <div className="text-sm text-muted-foreground space-y-2">
-                    <div>✓ تأثير يدوم 24 ساعة</div>
+                    <div>✓ تأثير يدوم +48 ساعة</div>
                     <div>✓ آمن ومرخص</div>
                     <div>✓ توصيل سري</div>
                     <div className="text-romantic">✓ توفير 50 شيكل</div>
@@ -305,10 +352,18 @@ const HomePage = () => {
                   <div className="space-y-1">
                     <div className="font-semibold text-luxury">
                             <span className="blur-sm select-none">
-                              {testimonial.name}
+                              {testimonial.name || "أحمد"}
                             </span>
                     </div>
-                    <div className="text-sm text-muted-foreground">{testimonial.city}</div>
+                    {
+                      testimonial.city
+                          ?  <div className="text-sm text-muted-foreground">{testimonial.city}</div>
+                          :  <div className="font-semibold text-luxury">
+                                <span className="blur-sm select-none">
+                                  jenin
+                                </span>
+                              </div>
+                    }
                   </div>
                 </CardContent>
               </Card>
@@ -406,48 +461,67 @@ const HomePage = () => {
       <footer className="bg-luxury text-luxury-foreground py-12">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-3 gap-8">
+            {/* Logo + slogan */}
             <div>
               <h3 className="text-xl font-bold mb-4">Ignite</h3>
-              <p className="opacity-80"> طاقة تدوم... شغف يستمر<br />اشعلي شغف زوجك بطريقة آمنة</p>
+              <p className="opacity-80">
+                طاقة تدوم... شغف يستمر<br />اشعلي شغف زوجك بطريقة آمنة
+              </p>
             </div>
+
+            {/* Quick links */}
             <div>
               <h4 className="font-semibold mb-4">روابط سريعة</h4>
-              <div className="space-y-2 opacity-80 ">
+              <div className="space-y-2 opacity-80">
                 <div>
-                  <Link to={'/purchase'}>المنتج</Link>
+                  <Link to="/product" className="hover:underline">المنتج</Link>
                 </div>
                 <div>
-                  <Link to={'/articles'}>المقالات الحصرية</Link>
+                  <Link to="/articles" className="hover:underline">المقالات الحصرية</Link>
                 </div>
                 <div>
-                  <Link to={'/privacy'}>سياسة الخصوصية</Link>
+                  <Link to="/privacy" className="hover:underline">سياسة الخصوصية</Link>
                 </div>
               </div>
             </div>
+
+            {/* Contact + social */}
             <div>
               <h4 className="font-semibold mb-4">تواصل معنا</h4>
               <div className="space-y-2 opacity-80">
                 <a
-                    href="https://wa.me/+972569645164"  //
+                    href="https://wa.me/+972528898428"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block hover:underline"
+                    className="flex items-center gap-2 hover:underline"
                 >
-                  تواصل مع معتصم
+                  <MessageCircle className="w-4 h-4 text-green-500" />
+                  تواصل مع المشرف
                 </a>
                 <a
-                    href="https://wa.me/0987654321"
+                    href="https://wa.me/+972597250539"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block hover:underline"
+                    className="flex items-center gap-2 hover:underline"
                 >
-                  تواصلي مع ياسمين
+                  <MessageCircle className="w-4 h-4 text-green-500" />
+                  تواصلي مع المشرفة
                 </a>
-                <div>توصيل سري وآمن</div>
+              </div>
+
+              {/* Social media */}
+              <div className="flex gap-4 mt-4">
+                <a href="https://www.facebook.com/share/16TAqMXu1n/" target="_blank" rel="noopener noreferrer">
+                  <Facebook className="w-5 h-5 hover:text-blue-500 transition" />
+                </a>
+                <a href="https://www.instagram.com/ignit.e69?igsh=YmY3eWRjcTMzZ2R0" target="_blank" rel="noopener noreferrer">
+                  <Instagram className="w-5 h-5 hover:text-pink-500 transition" />
+                </a>
               </div>
             </div>
           </div>
-          
+
+          {/* Footer bottom */}
           <div className="border-t border-luxury-foreground/20 mt-8 pt-8 text-center opacity-60">
             <p>&copy; 2024 Ignite. جميع الحقوق محفوظة.</p>
           </div>

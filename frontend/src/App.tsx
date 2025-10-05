@@ -14,6 +14,7 @@ import NotFound from "./pages/NotFound";
 import ProtectedRoute from "@/protect.tsx";
 import ArticleDetailPage from "./components/ArticleDetailPage";
 import ScrollToTop from "./ScrollToTop";
+import ProductPage from "./components/ProductPage";
 
 const queryClient = new QueryClient();
 
@@ -25,7 +26,9 @@ const App = () => (
       <BrowserRouter>
         <ScrollToTop />
         <Routes>
+
           <Route path="/" element={<Index />} />
+          <Route path="/product" element={<ProductPage />} />
           <Route path="/purchase" element={<PurchasePage />} />
           <Route path="/privacy" element={<PrivacyPage />} />
           <Route path="/signup" element={<SignupPage />} />

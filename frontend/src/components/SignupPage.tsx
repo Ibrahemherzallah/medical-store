@@ -174,10 +174,10 @@ const SignupPage = () => {
 
 
               <div className="space-y-2">
-                <Label htmlFor="city" className="text-luxury">المدينة *</Label>
+                <Label htmlFor="city" className="text-luxury">المنطقة *</Label>
                 <Select onValueChange={(value) => handleInputChange('city', value)} required>
                   <SelectTrigger className="text-right">
-                    <SelectValue placeholder="اختاري المدينة" />
+                    <SelectValue placeholder="اختار المنطقة" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="الضفة الغربية">الضفة الغربية</SelectItem>

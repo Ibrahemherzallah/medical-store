@@ -9,7 +9,7 @@ const orderSchema = new mongoose.Schema(
         },
         package: {
             type: String,
-            enum: ["1-pill", "3-pills"],
+            enum: ["1-pill", "4-pills"],
             required: true
         },
         name: {
@@ -48,6 +48,10 @@ const orderSchema = new mongoose.Schema(
         city: {
             type: String,
             required: true
+        },
+        delivered: {
+            type: Boolean,
+            default: false,
         },
     },
     { timestamps: true }

@@ -11,6 +11,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Star, MessageSquarePlus, Phone } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
+import heroVideo from "@/assets/gif.mp4";
+import screen from "@/assets/whatsapp-client.jpeg";
 
 
 const PurchasePage = () => {
@@ -54,7 +56,7 @@ const PurchasePage = () => {
 
   const packages = {
     'single': { name: 'حبة واحدة', price: 50 },
-    'triple': { name: 'ثلاث حبات', price: 100 }
+    'triple': { name: 'أربع حبات', price: 150 }
   };
 
   const handleCityChange = (city: string) => {
@@ -90,11 +92,15 @@ const PurchasePage = () => {
           ? JSON.parse(localStorage.getItem("user") || "{}")
           : null;
 
+      console.log("The stored user is : ", localStorage.getItem("user"))
+      console.log("The stored user is : ", storedUser)
       // update formData.user dynamically based on storedUser
       const payload = {
         ...formData,
-        user: storedUser ? true : false, // 👈 here
+        user: storedUser ? true : false,
+        userId: storedUser ? storedUser._id : null
       };
+      console.log("The payload user is : ", payload)
 
       const res = await fetch("http://localhost:3031/api/order", {
         method: "POST",
@@ -140,7 +146,7 @@ const PurchasePage = () => {
 
   const handleReviewSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!reviewData.rating || !reviewData.text || !reviewData.name) {
+    if (!reviewData.rating || !reviewData.text ) {
       toast({
         title: "خطأ",
         description: "يرجى ملء جميع حقول التقييم",
@@ -201,7 +207,6 @@ const PurchasePage = () => {
         phone: user.phone || "",
         secondPhone: user.secondPhone || "",
         email: user.email || "",
-        deliveryRegion: user.city || "", // because your model has city = الضفة/القدس/الداخل
       }));
     }
     const fetchReviews = async () => {
@@ -223,8 +228,21 @@ const PurchasePage = () => {
       {/* Navigation */}
       <nav className="container mx-auto px-4 py-6">
         <div className="flex justify-between items-center">
-          <div className="text-2xl font-bold text-luxury">
-            Ignite
+          <div className="flex items-center gap-3">
+            {/* اللوجو (GIF) */}
+            <video
+                src={heroVideo}
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-20 h-20 object-contain rounded-full"
+            />
+
+            {/* النص */}
+            <p className="text-lg font-semibold bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 bg-clip-text text-transparent font-[Cairo]">
+              طاقة تدوم... شغف يستمر
+            </p>
           </div>
           <Button variant="ghost" onClick={() => navigate('/')}>
             العودة للرئيسية
@@ -250,7 +268,7 @@ const PurchasePage = () => {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="single">حبة واحدة - 50 شيكل</SelectItem>
-                      <SelectItem value="triple">ثلاث حبات - 100 شيكل</SelectItem>
+                      <SelectItem value="triple">أربع حبات - 150 شيكل</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -380,7 +398,7 @@ const PurchasePage = () => {
             <Tabs defaultValue="reviews" className="w-full">
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="reviews">التقييمات</TabsTrigger>
-                <TabsTrigger value="screenshots">رسائل الواتساب</TabsTrigger>
+                <TabsTrigger value="faq">الأسئلة الشائعة</TabsTrigger>
               </TabsList>
               
               <TabsContent value="reviews" className="space-y-4">
@@ -421,7 +439,6 @@ const PurchasePage = () => {
                             value={reviewData.name}
                             onChange={(e) => setReviewData({ ...reviewData, name: e.target.value })}
                             placeholder="أدخل اسمك"
-                            required
                           />
                         </div>
 
@@ -432,7 +449,6 @@ const PurchasePage = () => {
                               value={reviewData.city}
                               onChange={(e) => setReviewData({ ...reviewData, city: e.target.value })}
                               placeholder="ادخل المدينة"
-                              required
                           />
                         </div>
                         
@@ -482,34 +498,37 @@ const PurchasePage = () => {
                         <div className="space-y-1">
                           <div className="font-semibold text-luxury">
                             <span className="blur-sm select-none">
-                              {testimonial.name}
+                              {testimonial.name || "أحمد"}
                             </span>
                           </div>
-                          <div className="text-sm text-muted-foreground">{testimonial.city}</div>
+                          {
+                            testimonial.city
+                                ?  <div className="text-sm text-muted-foreground">{testimonial.city}</div>
+                                :  <div className="font-semibold text-luxury">
+                                <span className="blur-sm select-none">
+                                  jenin
+                                </span>
+                                </div>
+                          }
                         </div>
                       </CardContent>
                     </Card>
                   ))}
                 </div>
               </TabsContent>
-              
-              <TabsContent value="screenshots" className="space-y-4">
-                <div className="grid gap-4">
-                  {whatsappScreenshots.map((screenshot) => (
-                    <Card key={screenshot.id} className="hover:shadow-romantic transition-elegant">
-                      <CardContent className="p-4">
-                        <img 
-                          src={screenshot.src} 
-                          alt={screenshot.alt}
-                          className="w-full h-64 object-cover rounded-lg bg-gradient-soft"
-                        />
-                        <p className="text-sm text-muted-foreground mt-2 text-center">
-                          {screenshot.alt}
-                        </p>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
+              <TabsContent value="faq" className="min-h-screen flex items-center justify-center">
+                <Card className="w-full max-w-4xl hover:shadow-romantic transition-elegant">
+                  <CardContent className="p-4">
+                    <img
+                        src={screen}
+                        alt="رسالة واتساب من زبون يستفسر عن المنتج"
+                        className="w-full h-[80vh] object-contain rounded-lg bg-gradient-soft"
+                    />
+                    <p className="text-sm text-muted-foreground mt-4 text-center">
+                      رسالة واتساب من زبون يستفسر عن المنتج
+                    </p>
+                  </CardContent>
+                </Card>
               </TabsContent>
             </Tabs>
           </div>

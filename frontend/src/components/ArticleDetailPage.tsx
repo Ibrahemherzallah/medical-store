@@ -265,7 +265,7 @@ const ArticleDetailPage = () => {
                     <CardContent className="p-8 text-center">
                         <h2 className="text-2xl font-bold mb-4">هل استفدت من هذا المقال؟</h2>
                         <p className="mb-6 opacity-90">
-                            انضم لعائلة Ignite 24 واحصل على محتوى حصري ومفيد كل أسبوع
+                            انضم لعائلة Ignite واحصل على محتوى حصري ومفيد كل أسبوع
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4 justify-center">
 
