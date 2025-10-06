@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -10,36 +10,76 @@ import { useNavigate } from 'react-router-dom';
 const LoginPage = () => {
   const { toast } = useToast();
   const [formData, setFormData] = useState({
-    username: '',
+    phone: '',
     password: ''
   });
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Frontend only - show success message and redirect
-    toast({
-      title: "تم تسجيل الدخول بنجاح!",
-      description: "مرحباً بعودتك، يمكنك الآن الوصول للمقالات الحصرية.",
-    });
-    
-    // Simulate login and redirect to articles
-    setTimeout(() => {
-      window.location.href = '/articles';
-    }, 1500);
+    try {
+      const res = await fetch("http://localhost:3031/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "حدث خطأ غير متوقع");
+      }
+
+      // ✅ Save user data + token in localStorage (or sessionStorage)
+      localStorage.setItem("user", JSON.stringify(data.user));
+      localStorage.setItem("token", data.token);
+
+      toast({
+        title: "تم تسجيل الدخول بنجاح!",
+        description: data.user.role === "admin" ? "مرحباً بعودتك، يمكنك الآن متابعة الطلبات وحسابات المستخدمين." : "مرحباً بعودتك، يمكنك الآن الوصول للمقالات الحصرية.",
+      });
+
+      // Redirect based on role
+      setTimeout(() => {
+        if (data.user.role === "admin") {
+          navigate("/admin");
+        } else {
+          navigate("/");
+        }
+      }, 1500);
+    } catch (err: any) {
+      toast({
+        title: "خطأ في تسجيل الدخول",
+        description: err.message || "تعذر الاتصال بالخادم",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      const user = JSON.parse(storedUser);
 
+      if (user.role === "admin") {
+        navigate("/admin", { replace: true });
+      } else {
+        navigate("/", { replace: true });
+      }
+    }
+  }, [navigate]);
   return (
-    <div className="min-h-screen bg-gradient-hero py-12" dir="rtl">
+    <div className="min-h-screen bg-gradient-hero" dir="rtl">
       {/* Navigation */}
       <nav className="container mx-auto px-4 py-6">
         <div className="flex justify-between items-center">
           <div className="text-2xl font-bold text-luxury">
-            Ignite 24
+            Ignite
           </div>
           <Button variant="outline" onClick={() => navigate('/')}>
             العودة للرئيسية
@@ -51,19 +91,19 @@ const LoginPage = () => {
         <Card className="shadow-luxury">
           <CardHeader className="text-center">
             <CardTitle className="text-3xl text-luxury mb-2">تسجيل الدخول</CardTitle>
-            <p className="text-muted-foreground">ادخلي للوصول للمقالات الحصرية</p>
+            <p className="text-muted-foreground">ادخل للوصول للمقالات الحصرية وافضل العروض</p>
           </CardHeader>
           
           <CardContent className="space-y-6">
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="username" className="text-luxury">اسم المستخدم</Label>
+                <Label htmlFor="phone" className="text-luxury">رقم الهاتف</Label>
                 <Input
-                  id="username"
+                  id="phone"
                   type="text"
-                  placeholder="أدخلي اسم المستخدم"
-                  value={formData.username}
-                  onChange={(e) => handleInputChange('username', e.target.value)}
+                  placeholder="أدخل رقم الهاتف"
+                  value={formData.phone}
+                  onChange={(e) => handleInputChange('phone', e.target.value)}
                   required
                   className="text-right"
                 />
@@ -74,7 +114,7 @@ const LoginPage = () => {
                 <Input
                   id="password"
                   type="password"
-                  placeholder="أدخلي كلمة المرور"
+                  placeholder="أدخل كلمة المرور"
                   value={formData.password}
                   onChange={(e) => handleInputChange('password', e.target.value)}
                   required
