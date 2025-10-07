@@ -34,7 +34,7 @@ const SignupPage = () => {
     }
 
     try {
-      const res = await fetch("http://localhost:3031/api/auth/signup", {
+      const res = await fetch("https://ignite69.com/api/auth/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
