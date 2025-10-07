@@ -14,7 +14,7 @@ const PORT = process.env.PORT || 3031;
 const staticPath = path.join(__dirname, 'static');
 
 app.use(cors({
-    origin: ['http://localhost:8080','https://ignite24.top'],
+    origin: ['http://localhost:8080','https://ignite69.com'],
     credentials: true
 }));
 dotenv.config();

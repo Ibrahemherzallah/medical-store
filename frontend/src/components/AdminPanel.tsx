@@ -23,7 +23,7 @@ const AdminPanel = () => {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await fetch(`http://localhost:3031/api/review/approve-review/${id}`, {
+      const res = await fetch(`https://ignite69.com/api/review/approve-review/${id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -68,7 +68,7 @@ const AdminPanel = () => {
 
     const fetchOrders = async () => {
       try {
-        const res = await fetch("http://localhost:3031/api/order", {
+        const res = await fetch("https://ignite69.com/api/order", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -84,7 +84,7 @@ const AdminPanel = () => {
 
     const fetchUsers = async () => {
       try {
-        const res = await fetch("http://localhost:3031/api/auth", {
+        const res = await fetch("https://ignite69.com/api/auth", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -100,7 +100,7 @@ const AdminPanel = () => {
 
     const fetchReviews = async () => {
       try {
-        const res = await fetch("http://localhost:3031/api/review", {
+        const res = await fetch("https://ignite69.com/api/review", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -289,7 +289,7 @@ const AdminPanel = () => {
                                   const newDelivered = e.target.checked;
 
                                   // 1. تحديث في السيرفر
-                                  const res = await fetch(`http://localhost:3031/api/order/${order._id}/status`, {
+                                  const res = await fetch(`https://ignite69.com/api/order/${order._id}/status`, {
                                     method: "PUT",
                                     headers: { "Content-Type": "application/json" },
                                     body: JSON.stringify({ delivered: newDelivered }),

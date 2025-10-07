@@ -41,7 +41,7 @@ const HomePage = () => {
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const res = await fetch("http://localhost:3031/api/review/get-approved-reviews");
+        const res = await fetch("https://ignite69.com/api/review/get-approved-reviews");
         const data = await res.json();
         if (!res.ok) throw new Error(data.message || "Error fetching reviews");
         console.log("Reviews:", data);

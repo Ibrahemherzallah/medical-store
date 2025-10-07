@@ -18,7 +18,7 @@ const LoginPage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await fetch("http://localhost:3031/api/auth/login", {
+      const res = await fetch("https://ignite69.com/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
