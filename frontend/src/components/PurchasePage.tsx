@@ -226,27 +226,65 @@ const PurchasePage = () => {
   return (
     <div className="min-h-screen bg-gradient-hero" dir="rtl">
       {/* Navigation */}
-      <nav className="container mx-auto px-4 py-6">
-        <div className="flex justify-between items-center">
-          <div className="flex items-center gap-3">
-            {/* اللوجو (GIF) */}
+      <nav className="container mx-auto px-4 py-4">
+        <div className="flex flex-wrap justify-between items-center gap-4">
+          {/* Logo Section */}
+          <div className="flex items-center gap-3 flex-shrink-0">
             <video
                 src={heroVideo}
                 autoPlay
                 loop
                 muted
                 playsInline
-                className="w-20 h-20 object-contain rounded-full"
+                className="w-16 h-16 object-contain rounded-full"
             />
-
-            {/* النص */}
-            <p className="text-lg font-semibold bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 bg-clip-text text-transparent font-[Cairo]">
+            <p className="text-base sm:text-lg font-semibold bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 bg-clip-text text-transparent font-[Cairo] whitespace-nowrap">
               طاقة تدوم... شغف يستمر
             </p>
           </div>
-          <Button variant="ghost" onClick={() => navigate('/')}>
-            العودة للرئيسية
-          </Button>
+
+          {/* Buttons Section */}
+          <div className="flex items-center gap-2 sm:gap-4 flex-wrap justify-center">
+            {localStorage.getItem("user") ? (
+                <div className="flex gap-2 sm:gap-3 flex-wrap justify-center">
+                  <Button
+                      variant="luxury"
+                      size="sm"
+                      onClick={() => navigate("/admin")}
+                  >
+                    لوحة التحكم
+                  </Button>
+                  <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        localStorage.removeItem("user");
+                        localStorage.removeItem("token");
+                        navigate("/login");
+                      }}
+                  >
+                    تسجيل الخروج
+                  </Button>
+                </div>
+            ) : (
+                <div className="flex gap-2 sm:gap-3 flex-wrap justify-center">
+                  <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => navigate("/login")}
+                  >
+                    تسجيل الدخول
+                  </Button>
+                  <Button
+                      variant="romantic"
+                      size="sm"
+                      onClick={() => navigate("/signup")}
+                  >
+                    انضمي معنا
+                  </Button>
+                </div>
+            )}
+          </div>
         </div>
       </nav>
 
