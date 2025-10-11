@@ -7,6 +7,7 @@ import { Star, Heart, Share2, ShoppingCart, ArrowRight } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import heroVideo from "@/assets/gif.mp4";
 import productVideo from "@/assets/product.mp4";
+import productImage from "@/assets/productImg.png";
 
 const ProductPage = () => {
     const navigate = useNavigate();
@@ -77,19 +78,17 @@ const ProductPage = () => {
                 <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
                     {/* Image Gallery */}
                     <div className="space-y-4">
-                        <Card className="overflow-hidden">
-                            <CardContent className="p-0">
-                                <video
-                                    src={productVideo}
-                                    autoPlay
-                                    loop
-                                    muted
-                                    playsInline
-                                    className="w-full h-[700px] object-cover rounded-lg pointer-events-none select-none"
-                                />
-                            </CardContent>
-                        </Card>
-                    </div>
+                      <Card className="overflow-hidden">
+                          <CardContent className="p-0">
+                              <img
+                                  src={productImage} // replace with your image variable or URL
+                                  alt="Product"
+                                  className="w-full h-[700px] object-cover rounded-lg pointer-events-none select-none"
+                              />
+                          </CardContent>
+                      </Card>
+                  </div>
+
                     {/* Product Details */}
                     <div className="space-y-6">
                         <div>
