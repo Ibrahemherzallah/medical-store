@@ -186,7 +186,7 @@ const HomePage = () => {
                   className="text-lg px-8 py-4 flex items-center gap-2"
                   onClick={() => navigate("/product")}
               >
-                👀 رؤية المنتج
+                👀 معاينة المنتج
               </Button>
             </div>
 
