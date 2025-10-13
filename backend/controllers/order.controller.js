@@ -94,3 +94,16 @@ export const updateOrderStatus = async (req, res) => {
         res.status(500).json({ message: "خطأ في تحديث حالة الطلب", error: error.message });
     }
 };
+
+
+
+// Delete order
+export const deleteOrder = async (req, res) => {
+    try {
+        const { id } = req.params;
+        await Order.findByIdAndDelete(id);
+        res.json({ message: "تم حذف الطلب بنجاح" });
+    } catch (error) {
+        res.status(500).json({ message: "خطأ في حذف الطلب", error: error.message });
+    }
+};

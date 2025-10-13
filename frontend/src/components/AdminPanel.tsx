@@ -8,13 +8,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import {Users, ShoppingCart, MessageSquare, Star, Clock, DollarSign} from "lucide-react";
 import {useNavigate} from "react-router-dom";
 
-// Mock data
-const mockOrders = [
-  { id: "1", customerName: "أحمد محمد", email: "ahmed@example.com", product: "منتج الطاقة", amount: "299 ريال", status: "مكتمل", date: "2024-01-15" },
-  { id: "2", customerName: "فاطمة علي", email: "fatima@example.com", product: "منتج الطاقة", amount: "299 ريال", status: "قيد المعالجة", date: "2024-01-14" },
-  { id: "3", customerName: "محمد أحمد", email: "mohammed@example.com", product: "منتج الطاقة", amount: "299 ريال", status: "مكتمل", date: "2024-01-13" },
-];
-
 
 
 const AdminPanel = () => {
@@ -261,9 +254,11 @@ const AdminPanel = () => {
                       <TableHead>سعر المنتج</TableHead>
                       <TableHead>المبلغ الكلي</TableHead>
                       <TableHead>التاريخ</TableHead>
-                      <TableHead>تم التوصيل</TableHead> {/* ✅ العمود الجديد */}
+                      <TableHead>تم التوصيل</TableHead>
+                      <TableHead>حذف</TableHead> {/* ✅ العمود الجديد */}
                     </TableRow>
                   </TableHeader>
+
                   <TableBody>
                     {orders?.map((order) => (
                         <TableRow
@@ -273,37 +268,75 @@ const AdminPanel = () => {
                           <TableCell>{order?.name}</TableCell>
                           <TableCell>{order?.city}</TableCell>
                           <TableCell>{order?.phone}</TableCell>
-                          <TableCell>{order?.secondPhone || '--------------------'}</TableCell>
-                          <TableCell>{order?.email || '--------------------'}</TableCell>
+                          <TableCell>{order?.secondPhone || "--------------------"}</TableCell>
+                          <TableCell>{order?.email || "--------------------"}</TableCell>
                           <TableCell>{order?.package}</TableCell>
                           <TableCell>{order?.packagePrice}</TableCell>
                           <TableCell>{order?.totalPrice}</TableCell>
                           <TableCell>{order?.createdAt.split("T")[0]}</TableCell>
 
-                          {/* ✅ العمود الجديد */}
+                          {/* ✅ تم التوصيل */}
                           <TableCell>
                             <input
                                 type="checkbox"
                                 checked={order.delivered}
                                 onChange={async (e) => {
                                   const newDelivered = e.target.checked;
-
-                                  // 1. تحديث في السيرفر
-                                  const res = await fetch(`https://ignite69.com/api/order/${order._id}/status`, {
-                                    method: "PUT",
-                                    headers: { "Content-Type": "application/json" },
-                                    body: JSON.stringify({ delivered: newDelivered }),
-                                  });
+                                  const res = await fetch(
+                                      `https://ignite69.com/api/order/${order._id}/status`,
+                                      {
+                                        method: "PUT",
+                                        headers: { "Content-Type": "application/json" },
+                                        body: JSON.stringify({ delivered: newDelivered }),
+                                      }
+                                  );
 
                                   if (res.ok) {
                                     setOrders((prev) =>
                                         prev.map((o) =>
-                                            o._id === order._id ? { ...o, delivered: newDelivered } : o
+                                            o._id === order._id
+                                                ? { ...o, delivered: newDelivered }
+                                                : o
                                         )
                                     );
                                   }
                                 }}
                             />
+                          </TableCell>
+
+                          {/* 🗑️ زر الحذف */}
+                          <TableCell>
+                            <button
+                                onClick={async () => {
+                                  const token = localStorage.getItem("token");
+                                  const confirmDelete = window.confirm(
+                                      `هل أنت متأكد أنك تريد حذف الطلب الخاص بـ ${order.name}؟`
+                                  );
+                                  if (!confirmDelete) return;
+
+                                  const res = await fetch(
+                                      `https://ignite69.com/api/order/${order._id}`,
+                                      {
+                                        method: "DELETE",
+                                        headers: {
+                                          "Content-Type": "application/json",
+                                          Authorization: `Bearer ${token}`,
+                                        }
+                                      }
+                                  );
+
+                                  if (res.ok) {
+                                    setOrders((prev) =>
+                                        prev.filter((o) => o._id !== order._id)
+                                    );
+                                  } else {
+                                    alert("حدث خطأ أثناء حذف الطلب");
+                                  }
+                                }}
+                                className="text-red-500 hover:text-red-700 transition-colors"
+                            >
+                              🗑️
+                            </button>
                           </TableCell>
                         </TableRow>
                     ))}
@@ -312,6 +345,7 @@ const AdminPanel = () => {
               </CardContent>
             </Card>
           </TabsContent>
+
 
           {/* Users Tab */}
           <TabsContent value="users">
