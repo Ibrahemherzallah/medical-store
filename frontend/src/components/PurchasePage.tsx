@@ -315,10 +315,10 @@ const PurchasePage = () => {
                 <div className="space-y-2">
                   <Label htmlFor="name">الاسم *</Label>
                   <Input
-                    id="name"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    required
+                      id="name"
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      required
                   />
                 </div>
 
@@ -326,11 +326,11 @@ const PurchasePage = () => {
                 <div className="space-y-2">
                   <Label htmlFor="phone">رقم الهاتف *</Label>
                   <Input
-                    id="phone"
-                    type="tel"
-                    value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    required
+                      id="phone"
+                      type="tel"
+                      value={formData.phone}
+                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                      required
                   />
                 </div>
 
@@ -338,10 +338,10 @@ const PurchasePage = () => {
                 <div className="space-y-2">
                   <Label htmlFor="secondPhone">رقم هاتف إضافي (إختياري)</Label>
                   <Input
-                    id="secondPhone"
-                    type="tel"
-                    value={formData.secondPhone}
-                    onChange={(e) => setFormData({ ...formData, secondPhone: e.target.value })}
+                      id="secondPhone"
+                      type="tel"
+                      value={formData.secondPhone}
+                      onChange={(e) => setFormData({ ...formData, secondPhone: e.target.value })}
                   />
                 </div>
 
@@ -349,13 +349,12 @@ const PurchasePage = () => {
                 <div className="space-y-2">
                   <Label htmlFor="email">البريد الإلكتروني (إختياري)</Label>
                   <Input
-                    id="email"
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      id="email"
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   />
                 </div>
-
 
                 {/* Address */}
                 <div className="space-y-2">
@@ -369,9 +368,7 @@ const PurchasePage = () => {
                 </div>
 
                 {/* City */}
-
-                { user
-                    ?
+                {user ? (
                     <div className="space-y-3">
                       <Label htmlFor="city">المنطقة *</Label>
                       <Select onValueChange={handleCityChange}>
@@ -385,7 +382,7 @@ const PurchasePage = () => {
                         </SelectContent>
                       </Select>
                     </div>
-                    :
+                ) : (
                     <div className="space-y-3">
                       <Label htmlFor="city">المنطقة *</Label>
                       <Select onValueChange={handleCityChange}>
@@ -399,8 +396,7 @@ const PurchasePage = () => {
                         </SelectContent>
                       </Select>
                     </div>
-                }
-
+                )}
 
                 {/* Total Price */}
                 {totalPrice > 0 && formData.city && (
@@ -409,9 +405,9 @@ const PurchasePage = () => {
                         {/* Old Price (strikethrough) */}
                         {user && (
                             <span className="text-gray-500 line-through text-base">
-                              {totalPrice + 20} شيكل
-                            </span>
-                         )}
+                {totalPrice + 20} شيكل
+              </span>
+                        )}
 
                         {/* New Price */}
                         <div className="flex justify-between w-full items-center">
@@ -422,9 +418,17 @@ const PurchasePage = () => {
                     </div>
                 )}
 
+                {/* Submit Button */}
                 <Button type="submit" size="lg" variant="romantic" className="w-full">
                   تأكيد الطلب
                 </Button>
+
+                {/* 🔒 Privacy Note (Romantic-Themed) */}
+                <div className="bg-gradient-to-r from-pink-50 to-red-50 border border-pink-200 rounded-2xl p-4 text-sm text-gray-700 text-center shadow-sm leading-relaxed">
+                  💌 <span className="font-semibold text-rose-500">ملاحظة الخصوصية:</span><br />
+                  جميع المعلومات التي تقدمها هنا تُستخدم فقط لأغراض التوصيل من قبل شركة الشحن،
+                  ولا يتم إخبار أي جهة بمحتوى الطرد. خصوصيتك وسريتك هي أولويتنا ❤️
+                </div>
               </form>
             </CardContent>
           </Card>

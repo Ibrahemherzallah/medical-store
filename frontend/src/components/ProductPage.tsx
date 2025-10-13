@@ -83,7 +83,7 @@ const ProductPage = () => {
                               <img
                                   src={productImage} // replace with your image variable or URL
                                   alt="Product"
-                                  className="w-full h-[700px] object-cover rounded-lg pointer-events-none select-none"
+                                  className="w-full h-[500px] object-cover rounded-lg pointer-events-none select-none"
                               />
                           </CardContent>
                       </Card>
